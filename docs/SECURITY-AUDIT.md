@@ -8,7 +8,7 @@ The audit covers this Next.js source repository, GitHub's `main` branch and its 
 - A separate Gitleaks scan reported no secrets in the generated static website. Scans used full output redaction and did not rely on `gitleaks:allow` comments.
 - `npm audit --omit=dev` reported zero known production dependency vulnerabilities at the time of the audit.
 - A full `npm audit`, including development and build packages, also reported zero known vulnerabilities.
-- The cleaned four-commit publication history passed a separate Gitleaks scan. The uploaded logo, information screenshot and both pricing screenshots were checked by Git blob hash and were absent from the cleaned `main` history, including under renamed paths.
+- The cleaned publication history and a fresh checkout fetched from GitHub passed separate Gitleaks scans. The uploaded logo, information screenshot and both pricing screenshots were checked by Git blob hash and were absent from the cleaned `main` history, including under renamed paths.
 - All five negative safeguard tests passed: an unapproved image filename, image bytes renamed to a text file, a private environment file, a synthetic token pattern and replacement bytes under an approved image filename were rejected. The tests restored the staged source unchanged.
 - The only environment file tracked is `.env.example`, containing empty contact/endpoint/registration settings and public website configuration. No real credentials are configured in it.
 - The preview manifest's project ID is an identifier, not an authentication secret. The Git remote URL has no embedded credentials.
@@ -35,6 +35,8 @@ Only generated site artwork and photos remain approved for Git. Each approved im
 A clean scan means that these checks found no secrets; it does not prove the absence of every possible secret or vulnerability. Dependency advisories can change. Repeat scans and audits before a public release and after connecting services.
 
 Rewriting Git history changes commit IDs. Collaborators with older clones should re-clone or carefully rebase rather than merge the old history back. Cleaning the current branch cannot recall existing clones, forks, downloaded copies or every cached GitHub view. GitHub documents the additional support process and its limits for sensitive data.
+
+The final HTTP checks confirmed that the current local homepage and generated boiler image return 200, while the removed uploaded logo file returns 404. A direct check of the uploaded logo at an old GitHub commit URL still returned 200 after the history rewrite. This is a confirmed residual historical-copy exposure, not a claim of complete erasure. GitHub-side cache/object cleanup would need to be handled separately; GitHub says support generally does not remove non-sensitive data. Do not treat the original upload as having been recalled from everyone who could previously access it.
 
 The earlier private Sites preview is a separate saved artifact. Its access was checked: it is private, with one allowed user and no external visitors. Cleaning this GitHub repository does not erase saved versions in that service. It is not the current local website.
 
