@@ -1,0 +1,20 @@
+{
+  "public/icon.svg": [
+    "b4f77b0ac63febbc0eaa941f0059ac274febec643c529706df172fc18809951a"
+  ],
+  "public/og-image.png": [
+    "2a50b6e1fc19b302a854e207423277a76f1b8bf909e27d1c00418af478ad2951"
+  ],
+  "public/images/boiler-check.webp": [
+    "c14a5bcd087fc6c21c626c143026252ca8a0c8b33f1bb69745ca7c3e4f333071"
+  ],
+  "public/images/boiler-flue.webp": [
+    "1417c00cef88b977af0019a9dd3e0c2c84a326f929e018c85c095724844dfff6"
+  ],
+  "public/images/gas-hob.webp": [
+    "f04d78bfb61ccb2aae896dd49b56afc781f63e24ed5272e725724bb839923b97"
+  ],
+  "public/images/home-hero.webp": [
+    "31da60a131219f950b7f4da9ce169cf82a54e8b98112790caf50fe8095580f13"
+  ]
+}

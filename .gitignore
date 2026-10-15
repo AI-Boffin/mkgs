@@ -10,3 +10,38 @@ artifacts/
 /info.jpeg
 /scripts/prepare-assets.mjs
 /scripts/prepare-trade-assets.mjs
+
+# User uploads and original reference material stay local.
+/private-reference/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.svg
+*.ico
+*.bmp
+*.tif
+*.tiff
+*.avif
+*.heic
+*.heif
+*.PNG
+*.JPG
+*.JPEG
+
+# Only these generated website assets may be tracked.
+!public/icon.svg
+!public/og-image.png
+!public/images/boiler-check.webp
+!public/images/boiler-flue.webp
+!public/images/gas-hob.webp
+!public/images/home-hero.webp
+
+# Credential files are never website source.
+*.pem
+*.p12
+*.pfx
+*.key
+*.keystore
+*.jks

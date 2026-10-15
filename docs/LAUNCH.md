@@ -25,6 +25,6 @@ The marketing copy is for domestic gas checks in England. Gas checks and boiler 
 
 The current local revision replaces the kitchen-led design with unbranded boiler, flue and gas-hob imagery and more direct service copy. See `docs/IMAGE-BRIEF.md` for the final assets, generation prompts and research sources. The earlier kitchen asset below is retained only as an unused reference.
 
-`public/original-logo.png` preserves the supplied image. `public/icon.svg` and the React brand component redraw the six-colour flame as a clean vector suitable for the web; they are a brand interpretation rather than an extracted official vector.
+Original user-uploaded images are local references only and must not be committed or placed in `public/`. `public/icon.svg` and the React brand component redraw the six-colour flame as a clean vector suitable for the web; they are a brand interpretation rather than an extracted official vector.
 
 `public/images/home-hero.webp` was made with the built-in image generation tool. It is illustrative, not a photo of Ram's work. Final generation prompt: premium editorial photograph of a welcoming British family kitchen; charcoal shaker cabinets, pale oak counters, cream walls, a terracotta vase and a green plant, gentle morning light from a garden window, subtle domestic gas hob; natural architecture-magazine photography, warm neutral palette, no people, text, logos or promotional graphics. The generated original is preserved outside the project; the web version is optimised locally.

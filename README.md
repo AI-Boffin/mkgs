@@ -44,3 +44,18 @@ Without an email or delivery endpoint, the form prepares an enquiry preview and 
 - The generated assets and local fonts are included. No image-generation step is needed to build or run the site. Local reference material and machine-specific preparation scripts are excluded from the repository.
 
 The `.openai/hosting.json` file records an earlier private preview. The local app and static export do not require that hosting service or a ChatGPT login.
+
+## Repository safety
+
+User-uploaded images, screenshots and original logo files must stay local and must not be committed, including copies or renamed versions. Keep reference material in the ignored `private-reference/` directory, outside `public/`. Only the generated website assets listed by hash in `.security/approved-public-assets.json` are approved for Git.
+
+After cloning, install the local commit and push checks:
+
+```sh
+npm run security:install-hooks
+npm run security:check
+npm run security:history
+npm run security:test
+```
+
+The checks block unapproved images, environment/credential files and common hardcoded secret patterns. They do not replace a complete secret scanner or security review. Never commit real API keys or put secrets in `NEXT_PUBLIC_` variables. See [the audit and cleanup notes](docs/SECURITY-AUDIT.md).
