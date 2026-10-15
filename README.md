@@ -41,6 +41,6 @@ Without an email or delivery endpoint, the form prepares an enquiry preview and 
 - [Launch checklist](docs/LAUNCH.md): business details, privacy, registration, delivery and search indexing.
 - [Image brief and research](docs/IMAGE-BRIEF.md): current image assets, generation prompts and UK guidance sources.
 - The boiler, flue and hob images are AI-generated illustrations, not photos of Ram or completed jobs.
-- The generated assets and local fonts are included. Asset preparation scripts record the original local generation workflow and are not needed to build or run the site.
+- The generated assets and local fonts are included. No image-generation step is needed to build or run the site. Local reference material and machine-specific preparation scripts are excluded from the repository.
 
 The `.openai/hosting.json` file records an earlier private preview. The local app and static export do not require that hosting service or a ChatGPT login.

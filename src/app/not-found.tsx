@@ -1,0 +1,1 @@
+export default function NotFound(){return <main id="main" className="container not-found"><p className="eyebrow">A LITTLE OFF OUR PATCH</p><h1>Let’s get you home.</h1><p>We couldn’t find that page. Your next gas safety check is just a few clicks away.</p><a href="/" className="button button-orange">Back to MK Gas Safety ↗</a></main>;}

@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+*.tsbuildinfo
+.sites-runtime/
+artifacts/
+.npm-cache/
+/info.jpeg
+/scripts/prepare-assets.mjs
+/scripts/prepare-trade-assets.mjs
