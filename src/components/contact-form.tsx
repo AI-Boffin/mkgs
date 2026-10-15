@@ -1,25 +1,44 @@
 'use client';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { ArrowUpRight, Check, Copy, Mail } from 'lucide-react';
 import { site } from '@/lib/site';
+import { getLandlordPrice, packageSelectionEvent, type PackageSelection } from '@/lib/pricing';
 export function ContactForm() {
   const [status,setStatus] = useState<'idle'|'sending'|'draft'|'sent'|'error'>('idle');
   const [draft,setDraft] = useState('');
   const [copied,setCopied] = useState(false);
+  const [service,setService] = useState('');
+  const [appliances,setAppliances] = useState('');
+  const [alarm,setAlarm] = useState('');
+  const listedPrice = service === 'Landlord gas safety check / CP12' && (alarm === 'Check only — no new alarm' || alarm === 'Supply and fit one carbon monoxide alarm') ? getLandlordPrice(Number.parseInt(appliances,10),alarm === 'Supply and fit one carbon monoxide alarm') : undefined;
+
+  useEffect(() => {
+    function handlePackage(event: Event) {
+      const detail = (event as CustomEvent<PackageSelection>).detail;
+      if (!detail || ![1,2,3].includes(detail.appliances) || typeof detail.withAlarm !== 'boolean') return;
+      setService('Landlord gas safety check / CP12');
+      setAppliances(`${detail.appliances} ${detail.appliances === 1 ? 'appliance' : 'appliances'}`);
+      setAlarm(detail.withAlarm ? 'Supply and fit one carbon monoxide alarm' : 'Check only — no new alarm');
+      setStatus('idle');
+    }
+    window.addEventListener(packageSelectionEvent,handlePackage);
+    return () => window.removeEventListener(packageSelectionEvent,handlePackage);
+  },[]);
   async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form=event.currentTarget;
     const data=new FormData(form);
     if(data.get('website')) return;
     const email=String(data.get('email')||'').trim();
-    const text=`Gas safety enquiry\n\nName: ${data.get('name')}\nEmail: ${email}\nArea: ${data.get('area')}\nProperty postcode: ${String(data.get('postcode')).toUpperCase()}\nService: ${data.get('service')}\nAppliances: ${data.get('appliances')}\nPreferred timing / due date: ${data.get('timing')||'Flexible'}\n\n${data.get('message')||'Please email me to discuss a gas safety check.'}`;
+    if(listedPrice !== undefined) data.set('listedPackageTotal',`£${listedPrice} — subject to scope and total confirmation`);
+    const text=`Gas safety enquiry\n\nName: ${data.get('name')}\nEmail: ${email}\nArea: ${data.get('area')}\nProperty postcode: ${String(data.get('postcode')).toUpperCase()}\nService: ${data.get('service')}\nAppliances: ${data.get('appliances')}\nCarbon monoxide alarm: ${data.get('alarm')}\n${listedPrice !== undefined ? `Listed landlord package: £${listedPrice} — subject to confirmation\n` : ''}Preferred timing / due date: ${data.get('timing')||'Flexible'}\n\n${data.get('message')||'Please email me to discuss a gas safety check.'}`;
     setDraft(text); setCopied(false);
     if(site.contactEndpoint) {
       setStatus('sending');
       try {
         const response=await fetch(site.contactEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(data)),signal:AbortSignal.timeout(15000)});
         if(!response.ok) throw new Error('Delivery failed');
-        setStatus('sent');form.reset();
+        setStatus('sent');form.reset();setService('');setAppliances('');setAlarm('');
       } catch {setStatus('error');}
     } else {
       setStatus('draft');
@@ -28,10 +47,13 @@ export function ContactForm() {
   }
   return <form className="contact-form" onSubmit={submit}>
     <div className="form-heading"><span className="step-dot">↗</span><div><h3>Tell Ram about your property.</h3><p>No calls needed. No obligation.</p></div></div>
-    <div className="form-grid"><label>Your name <span>*</span><input name="name" autoComplete="name" placeholder="First and last name" maxLength={100} required/></label><label>Email address <span>*</span><input name="email" type="email" autoComplete="email" placeholder="you@example.co.uk" maxLength={254} required/></label><label>Property area <span>*</span><select name="area" required defaultValue=""><option value="" disabled>Select your area</option><option>Milton Keynes</option><option>Buckingham</option><option>Newport Pagnell</option></select></label><label>Property postcode <span>*</span><input name="postcode" autoComplete="postal-code" placeholder="e.g. MK9 1AA" maxLength={8} pattern="[A-Za-z]{1,2}[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}" title="Enter a full UK postcode, for example MK9 1AA" required/></label><label>What can Ram help with? <span>*</span><select name="service" required defaultValue=""><option value="" disabled>Select a service</option><option>Landlord gas safety check / CP12</option><option>Homeowner gas safety check</option><option>Letting agent / multiple properties</option><option>Not sure — I’d like some advice</option></select></label><label>Number of gas appliances <span>*</span><select name="appliances" required defaultValue=""><option value="" disabled>Select number</option><option>1 appliance</option><option>2 appliances</option><option>3 or more appliances</option><option>Not sure yet</option></select></label></div>
+    <div className="form-grid"><label>Your name <span>*</span><input name="name" autoComplete="name" placeholder="First and last name" maxLength={100} required/></label><label>Email address <span>*</span><input name="email" type="email" autoComplete="email" placeholder="you@example.co.uk" maxLength={254} required/></label><label>Property area <span>*</span><select name="area" required defaultValue=""><option value="" disabled>Select your area</option><option>Milton Keynes</option><option>Buckingham</option><option>Newport Pagnell</option></select></label><label>Property postcode <span>*</span><input name="postcode" autoComplete="postal-code" placeholder="e.g. MK9 1AA" maxLength={8} pattern="[A-Za-z]{1,2}[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}" title="Enter a full UK postcode, for example MK9 1AA" required/></label><label>What can Ram help with? <span>*</span><select name="service" required value={service} onChange={event=>{setService(event.target.value);setStatus('idle');}}><option value="" disabled>Select a service</option><option>Landlord gas safety check / CP12</option><option>Homeowner gas safety check</option><option>Letting agent / multiple properties</option><option>Not sure — I’d like some advice</option></select></label><label>Number of gas appliances <span>*</span><select name="appliances" required value={appliances} onChange={event=>{setAppliances(event.target.value);setStatus('idle');}}><option value="" disabled>Select number</option><option>1 appliance</option><option>2 appliances</option><option>3 appliances</option><option>4 or more appliances</option><option>Not sure yet</option></select></label></div>
+    <label>Carbon monoxide alarm <span>*</span><select name="alarm" required value={alarm} onChange={event=>{setAlarm(event.target.value);setStatus('idle');}}><option value="" disabled>Select an option</option><option>Check only — no new alarm</option><option>Supply and fit one carbon monoxide alarm</option><option>Not sure — please advise</option></select></label>
+    {listedPrice !== undefined && <div className="selected-package" role="status"><Check size={20}/><div><strong>Listed landlord package: £{listedPrice}</strong><p>{appliances} · {alarm === 'Supply and fit one carbon monoxide alarm' ? 'Includes one CO alarm supplied and fitted' : 'Check only, without a new alarm'}. Ram confirms the scope and total before booking.</p></div></div>}
     <label>Preferred timing or record due date <span className="optional">(optional)</span><input name="timing" placeholder="e.g. Before 30 November, weekday mornings" maxLength={150}/></label>
     <label>Anything else Ram should know? <span className="optional">(optional)</span><textarea name="message" rows={3} placeholder="Appliance types, access arrangements or any questions…" maxLength={3000}/></label>
     <div className="honeypot" aria-hidden="true"><label>Leave this blank<input name="website" tabIndex={-1} autoComplete="off"/></label></div>
+    <p className="form-service-note">Please arrange property access before booking. We’re currently unable to certify Powermax boilers.</p>
     <label className="consent"><input name="privacy" type="checkbox" value="agreed" required/><span>I’ve read the <a href="/privacy/">privacy notice</a> and understand my details will be used to respond to this enquiry.</span></label>
     <button className="button button-orange form-submit" disabled={status==='sending'} type="submit">{status==='sending'?'Sending your enquiry…':site.contactEndpoint?'Send my enquiry':'Prepare my email enquiry'} <ArrowUpRight size={19}/></button>
     <p className="form-footnote">An enquiry isn’t a confirmed booking. Ram will confirm pricing and availability by email.</p>

@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { ArrowUpRight, ArrowRight, ShieldCheck, House, FileCheck2, Mail, MapPin, Check, Layers, ClipboardCheck, CircleCheck, BadgeCheck } from 'lucide-react';
 import { ContactForm } from '@/components/contact-form';
 import { InspectionGuide } from '@/components/inspection-guide';
+import { Pricing } from '@/components/pricing';
+import { carbonMonoxideAlarmPrice, landlordPrices } from '@/lib/pricing';
 import { areas, faqs, site } from '@/lib/site';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
@@ -17,7 +19,7 @@ export default function Home() {
     description: 'Domestic gas safety checks and landlord gas safety records in Milton Keynes, Buckingham and Newport Pagnell.',
     image: `${site.url}/images/boiler-check.webp`, ...(site.email ? { email: site.email } : {}),
     areaServed: areas.map(area => ({ '@type': 'City', name: area.name })),
-    hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Gas safety checks', itemListElement: services.map(service => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: service.title } })) },
+    hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Gas safety checks', itemListElement: [...services.map(service => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: service.title } })), ...landlordPrices.flatMap(plan => [false, true].map(withAlarm => ({ '@type': 'Offer', price: plan.price + (withAlarm ? carbonMonoxideAlarmPrice : 0), priceCurrency: 'GBP', url: `${site.url}/#pricing`, name: `${plan.appliances} gas appliance landlord check${withAlarm ? ' with one carbon monoxide alarm supplied and fitted' : ' without a new alarm'}`, itemOffered: { '@type': 'Service', name: 'Landlord gas safety check and record (CP12)' } })))] },
   };
   return <main id="main">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(business).replace(/</g, '\\u003c') }} />
@@ -25,9 +27,9 @@ export default function Home() {
       <div className="hero-copy">
         <p className="eyebrow"><span /> MK GAS SAFETY · DOMESTIC GAS CHECKS</p>
         <h1>Gas safety checks<br />& landlord<br /><span className="hero-emphasis">certificates.</span></h1>
-        <p className="hero-description">Boiler, gas appliance and flue safety checks for landlords and homeowners. <strong>Arrange your visit with Ram by email.</strong></p>
+        <p className="hero-description">Boiler, gas appliance and flue safety checks for landlords and homeowners. <strong>Landlord checks from £50. Arrange your visit with Ram by email.</strong></p>
         <p className="hero-areas"><MapPin size={16} /><span>Milton Keynes · Buckingham · Newport Pagnell</span></p>
-        <div className="hero-actions"><a className="button button-orange" href="#contact">Request a quote <ArrowUpRight size={19} /></a><a className="text-link" href="#whats-checked">What gets checked <ArrowRight size={16} /></a></div>
+        <div className="hero-actions"><a className="button button-orange" href="#contact">Request a quote <ArrowUpRight size={19} /></a><a className="text-link" href="#pricing">View prices <ArrowRight size={16} /></a></div>
         <div className="hero-facts"><span><Check size={15} /> Price agreed before booking</span><span><Mail size={15} /> No phone call needed</span></div>
       </div>
       <div className="hero-visual">
@@ -37,6 +39,7 @@ export default function Home() {
       </div>
     </section>
     <div className="trust-strip"><div className="container"><span><FileCheck2 /> Landlord gas safety records (CP12)</span><span><MapPin /> Three local service areas</span><span><Mail /> Email-first enquiries</span></div></div>
+    <Pricing />
 
     <section id="services" className="section container services direct-services">
       <div className="section-heading"><div><p className="eyebrow">OUR SERVICES</p><h2>Gas safety checks<br />for your property.</h2></div><p>Tell Ram your postcode, the number of gas appliances and when your check is due. He’ll confirm the scope, price and availability.</p></div>

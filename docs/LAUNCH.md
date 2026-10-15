@@ -4,6 +4,8 @@ This is a Next.js App Router site using TypeScript and static generation. Run `n
 
 ## Confirm before public launch
 
+- Landlord package prices have now been supplied in two screenshots and added to the site. See `docs/PRICING.md` for the six prices, alarm inclusion, property-access note and Powermax exclusion. Confirm these remain current and clarify the VAT treatment before public launch.
+
 - Ram's real enquiry email. Set `NEXT_PUBLIC_CONTACT_EMAIL` and rebuild. The default email flow creates a draft in the visitor's email application; the visitor must send it. It never claims a draft was delivered. For submission directly on the page, connect `NEXT_PUBLIC_CONTACT_ENDPOINT` to a real HTTPS form/email service with server-side validation, abuse protection, origin controls, length limits, and a verified recipient. Update the privacy notice for that provider. No secret belongs in a `NEXT_PUBLIC_` variable.
 - Ram's Gas Safe registration and qualifications for all advertised work. Set `NEXT_PUBLIC_GAS_SAFE_NUMBER` after verification. No registration number, official logo, testimonials, prices, response-time promises or trading history have been invented.
 - Confirm any business contact address directly with Ram before publishing it. The old reference screenshot is retained locally and excluded from the repository; no visitor address is advertised.
